@@ -1,5 +1,5 @@
+import * as model from './model.ts';
 // import 'core-js/stable';
-// import 'regenerator-runtime/runtime';
 const icons = new URL('../img/icons.svg', import.meta.url);
 const recipeContainer = document.querySelector('.recipe') as HTMLElement;
 
@@ -26,26 +26,11 @@ const showRecipes = async function () {
   try {
     //1. Loading recipes
     renderSpiner(recipeContainer);
-    const res = await fetch(
-      `https://forkify-api.herokuapp.com/api/v2/recipes/${id}`
-    );
-    const data = await res.json();
+    await model.loadRecipes(id);
 
-    if (!res.ok) {
-      throw new Error(`${data.message} (${res.status})`);
-    }
-    let { recipe } = data.data;
-    recipe = {
-      id: recipe.id,
-      imageUrl: recipe.image_url,
-      publisher: recipe.publisher,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      title: recipe.title,
-      ingredients: recipe.ingredients,
-      sourceUrl: recipe.source_url,
-    };
+    //2. Rendering recipe
+    const recipe = model.state.recipe;
+    
 
     const markup = `
     <figure class="recipe__fig">
@@ -157,6 +142,3 @@ showRecipes();
 window.addEventListener('hashchange',showRecipes);
 // window.addEventListener('load',showRecipes);
 
-// https://forkify-api.herokuapp.com/v2
-
-///////////////////////////////////////
